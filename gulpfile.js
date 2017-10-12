@@ -98,9 +98,10 @@ gulp.task('live',  ['browser-sync'], function() {
     // Watch scss, js, img, html files
     gulp.watch('src/scss/**/*.scss', ['sass']);
     gulp.watch('src/css/**/*.css', ['css']);
-    gulp.watch('src/js/**/app.js', ['js-minify']);
+    gulp.watch('src/js/**/*.js', ['js-minify']);
     gulp.watch('src/img/**/*', ['img']);
     gulp.watch('src/**/*.html', ['html']);
+    gulp.watch('src/font/*', ['move-fonts']);
 });
 
 
