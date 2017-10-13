@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let blocks = document.getElementsByClassName('vtl');
-    blocks = Array.from(blocks);
+    const blocks = Array.from(document.getElementsByClassName('vtl'));
     let locked = false;
 
     window.addEventListener('scroll', () => {
@@ -13,13 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function isElVisible(el) {
-        el.top = el.getBoundingClientRect.top;
-        el.bottom = el.getBoundingClientRect.bottom;
+        el.top = el.getBoundingClientRect().top;
+        el.bottom = el.getBoundingClientRect().bottom;
 
         let vpTop = window.scrollY;
         let vpBottom = vpTop + window.innerHeight * .8;
 
-        console.log(el.top < vpBottom && el.bottom > vpTop);
         return el.top < vpBottom && el.bottom > vpTop;
     }
 

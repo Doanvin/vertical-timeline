@@ -5,6 +5,7 @@ var babel         = require('gulp-babel');
 var browserSync   = require('browser-sync');
 var cache         = require('gulp-cache');
 var concat        = require('gulp-concat');
+var del           = require('del');
 var htmlmin       = require('gulp-htmlmin');
 var imagemin      = require('gulp-imagemin');
 var cleanCSS      = require('gulp-clean-css');
@@ -15,18 +16,29 @@ var sass          = require('gulp-sass');
 var sourcemaps    = require('gulp-sourcemaps');
 var uglify        = require('gulp-uglify');
 
-
-gulp.task('js-minify', function () {
-    return gulp.src('src/js/*.js')
-        .pipe(plumber())
-        .pipe(babel())
-        .pipe(sourcemaps.init())
-        .pipe(rename({ suffix: '.min' }))
-        .pipe(uglify())
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('dist/js'))
-        .pipe(reload({stream:true}));
+// JS Task
+gulp.task('js-transpile', function () {
+  del(['dist/js/*.js', '!dist/js/*.min.js', '!dist/js/*.map']);
+  return gulp.src('src/js/**/*.js')
+    .pipe(plumber())
+    .pipe(sourcemaps.init())
+    .pipe(babel())
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('dist/js'));
 });
+
+gulp.task('js-minify', ['js-transpile'], function () {
+  return gulp.src(['dist/js/*.js', '!dist/js/*.min.js', '!dist/js/*.map'])
+    .pipe(plumber())
+    .pipe(sourcemaps.init())
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(uglify())
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('dist/js'))
+    .pipe(reload({stream:true}));
+});
+
+gulp.task('js', ['js-transpile', 'js-minify']);
 
 
 // Css Task
@@ -98,7 +110,7 @@ gulp.task('live',  ['browser-sync'], function() {
     // Watch scss, js, img, html files
     gulp.watch('src/scss/**/*.scss', ['sass']);
     gulp.watch('src/css/**/*.css', ['css']);
-    gulp.watch('src/js/**/*.js', ['js-minify']);
+    gulp.watch('src/js/**/*.js', ['js']);
     gulp.watch('src/img/**/*', ['img']);
     gulp.watch('src/**/*.html', ['html']);
     gulp.watch('src/font/*', ['move-fonts']);
@@ -107,5 +119,5 @@ gulp.task('live',  ['browser-sync'], function() {
 
 // Default Task
 gulp.task('default', function() {
-    gulp.start('sass', 'css', 'js-minify', 'img', 'html', 'move-fonts');
+    gulp.start('sass', 'css', 'js', 'img', 'html', 'move-fonts');
 });
