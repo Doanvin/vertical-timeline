@@ -1,32 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
     const blocks = Array.from(document.getElementsByClassName('vtl'));
-    let locked = false;
+    let locked = false; // Caution: global var to limit scroll event functions
 
     window.addEventListener('scroll', () => {
         if (locked) return;
-        locked = true;
         (!window.requestAnimationFrame)
             ? setTimeout(() => toggleBlockVisibility(blocks), 150)
             : window.requestAnimationFrame(() => toggleBlockVisibility(blocks));
-        locked = false;
+
     });
 
+
     function isElVisible(el) {
-        el.top = el.getBoundingClientRect().top;
-        el.bottom = el.getBoundingClientRect().bottom;
+        el.bottom = el.getBoundingClientRect().bottom; // bot of el to top of vp
+        let vpBottom = window.innerHeight; // bottom of vp to top of vp
 
-        let vpTop = window.scrollY;
-        let vpBottom = vpTop + window.innerHeight * .8;
-
-        return el.top < vpBottom && el.bottom > vpTop;
+        return el.top - 50 < vpBottom && el.bottom - 200 > 0;
     }
 
 
     function toggleBlockVisibility(classArray) {
-        classArray.forEach( (elem) => {
-            (!isElVisible(elem))
-                ? elem.classList.add('is-hidden')
-                : elem.classList.remove('is-hidden');
+        locked = true;
+        classArray.forEach( elem => {
+            if (!isElVisible(elem))  elem.classList.add('is-hidden');
+            else {
+                elem.classList.remove('is-hidden');
+                elem.classList.add('bounce-in');
+            }
         });
+        locked = false;
     }
 });
