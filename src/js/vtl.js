@@ -12,10 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function isElVisible(el) {
+        el.top = el.getBoundingClientRect().top; // top of el to top of vp
         el.bottom = el.getBoundingClientRect().bottom; // bot of el to top of vp
+        el.height = el.getBoundingClientRect().height;
         let vpBottom = window.innerHeight; // bottom of vp to top of vp
 
-        return el.top - 50 < vpBottom && el.bottom - 200 > 0;
+        const offset = 50;
+
+        return el.top + offset < vpBottom && el.bottom - offset > 0;
     }
 
 
